@@ -1,0 +1,70 @@
+/* NewsComponent.css */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  .card-img-top {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .card-link {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .card-link:hover {
+    color: #0056b3;
+  }
+  .newscountry{
+    display: flex;
+  }
+  .usnews{
+    width: 50%;
+    background-color: brown;
+    margin: 1%;
+    height: 50vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .indianews{
+    width: 50%;
+    background-color: greenyellow;
+    margin: 1%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .cardcountry{
+    width: 96%;
+    background-color: #0056b3;
+    height: 20vh;
+    margin-top: 5%;
+    margin-left: 2%;
+  }
+  .cardcountry:hover {
+    transform: translateY(-5px);
+  }
+  

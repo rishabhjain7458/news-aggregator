@@ -1,0 +1,44 @@
+/* NewsComponent.css */
+
+.categorycontainer {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-top: 2%;
+    gap: 1%;
+}
+
+.categorycard {
+    width: 32%; /* Adjust the width as needed */
+    height:65vh; /* Adjust the height as needed */
+    margin-bottom: 20px;
+    background-color: #DD0103;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    overflow: hidden;
+}
+
+.categoryimg {
+    width: 100%;
+    height: 100%;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #666;
+}
+
+.btn {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}

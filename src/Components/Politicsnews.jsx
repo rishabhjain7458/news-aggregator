@@ -6,18 +6,19 @@ import "./CategoryNews.css";
 const PoliticsNews = () => {
     const [politicsNews, setPoliticsNews] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [country, setCountry] = useState("us"); // Default country is USA
 
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
             try {
-                // Fetch Politics news
+                // Fetch Politics news based on selected country
                 const politicsResponse = await axios.get(
                     "https://newsapi.org/v2/top-headlines",
                     {
                         params: {
                             category: "politics",
-                            country: "us",
+                            country: country, // Use the selected country
                             apiKey: "362214fe295a47e796e19883a30b596b",
                             pageSize: 100,
                         },
@@ -33,7 +34,7 @@ const PoliticsNews = () => {
         };
 
         fetchNews(); // Call the fetchNews function
-    }, []);
+    }, [country]); // Re-run effect when country changes
 
     // Function to truncate text
     const truncateText = (text, maxLength) => {
@@ -41,8 +42,21 @@ const PoliticsNews = () => {
         return text.substr(0, maxLength) + "...";
     };
 
+    // Function to handle country change
+    const handleCountryChange = (newCountry) => {
+        setCountry(newCountry);
+    };
+
     return (
         <div>
+            <div className="country-buttons">
+                <button className="btn btn-success usabutton" onClick={() => handleCountryChange("us")}>
+                    USA
+                </button>
+                <button className="btn btn-success indiabutton" onClick={() => handleCountryChange("in")}>
+                    India
+                </button>
+            </div>
             {loading ? (
                 <p>Loading...</p>
             ) : (

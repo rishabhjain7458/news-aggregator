@@ -6,18 +6,19 @@ import "./CategoryNews.css";
 const EntertainmentNews = () => {
     const [entertainmentNews, setEntertainmentNews] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [country, setCountry] = useState("us"); // Default country is USA
 
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
             try {
-                // Fetch Entertainment news
+                // Fetch Entertainment news based on selected country
                 const entertainmentResponse = await axios.get(
                     "https://newsapi.org/v2/top-headlines",
                     {
                         params: {
                             category: "entertainment",
-                            country: "us",
+                            country: country, // Use the selected country
                             apiKey: "362214fe295a47e796e19883a30b596b",
                             pageSize: 100,
                         },
@@ -33,16 +34,29 @@ const EntertainmentNews = () => {
         };
 
         fetchNews(); // Call the fetchNews function
-    }, []);
+    }, [country]); // Re-run effect when country changes
 
     // Function to truncate text
     const truncateText = (text, maxLength) => {
-        if (text.length <= maxLength) return text;
+        if (!text || text.length <= maxLength) return text;
         return text.substr(0, maxLength) + "...";
+    };
+
+    // Function to handle country change
+    const handleCountryChange = (newCountry) => {
+        setCountry(newCountry);
     };
 
     return (
         <div>
+            <div className="country-buttons">
+                <button className="btn btn-success usabutton" onClick={() => handleCountryChange("us")}>
+                    USA
+                </button>
+                <button className="btn btn-success indiabutton" onClick={() => handleCountryChange("in")}>
+                    India
+                </button>
+            </div>
             {loading ? (
                 <p>Loading...</p>
             ) : (

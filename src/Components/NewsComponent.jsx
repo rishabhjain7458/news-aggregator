@@ -12,7 +12,7 @@ const NewsComponent = () => {
 		const fetchNews = async () => {
 			setLoading(true);
 			try {
-				// Fetch US news
+				
 				const usResponse = await axios.get(
 					"https://newsapi.org/v2/top-headlines",
 					{
@@ -28,7 +28,7 @@ const NewsComponent = () => {
 				);
 				setUsNews(usFilteredNews);
 
-				// Fetch India news
+				
 				const indiaResponse = await axios.get(
 					"https://newsapi.org/v2/top-headlines",
 					{
@@ -187,7 +187,7 @@ const NewsComponent = () => {
 					<div className="col-md-5">
 						<div
 							className="mt-1 pe-2"
-							style={{ maxHeight: "120vh", overflowY: "auto" }}>
+							style={{ maxHeight: "120vh", overflowY: "scroll" }}>
 							<h1 style={{ textAlign: "center", backgroundColor: "#DD0103" , color:"white"}}>
 								HEADLINES
 							</h1>

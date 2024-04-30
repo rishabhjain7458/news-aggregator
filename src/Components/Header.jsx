@@ -3,22 +3,8 @@ import { Link } from "react-router-dom";
 import logo from "../assets/newsnow.png";
 import Footer from "./Footer";
 
-const scrollToFooter = (e) => {
-  e.preventDefault(); // Prevent default anchor behavior
-  const footer = document.getElementById("Footer"); // Get the footer element
-  footer.scrollIntoView({ behavior: "smooth" }); // Scroll to the footer with smooth behavior
-};
 
 function Header() {
-  const [isIndiaNews, setIsIndiaNews] = useState(false);
-
-  const toggleNews = () => {
-    setIsIndiaNews(!isIndiaNews);
-    // Here you can trigger your API calls or state updates to switch between India and USA news
-    // For now, let's just log the current news source
-    console.log(isIndiaNews ? "Switched to USA news" : "Switched to India news");
-  };
-
   return (
     <>
       <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#F5CC75" }}>
@@ -72,34 +58,6 @@ function Header() {
                 <Link to="/business" className="nav-link text-black">
                   Business
                 </Link>
-              </li>
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle text-black"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  More
-                </a>
-                <ul className="dropdown-menu">
-                  <li>
-                    <a className="dropdown-item" href="#footer" onClick={(e) => scrollToFooter(e)}>
-                      Subscribe to Newsletters
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Get in Touch
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Blogs
-                    </a>
-                  </li>
-                </ul>
               </li>
             </ul>
           </div>

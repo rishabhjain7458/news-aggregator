@@ -1,6 +1,4 @@
-/* NewsComponent.css */
 
-/* Common styles */
 .categorycontainer {
     display: flex;
     flex-wrap: wrap;
@@ -11,8 +9,8 @@
   }
   
   .categorycard {
-    width: 32%; /* Adjust the width as needed */
-    height: 65vh; /* Adjust the height as needed */
+    width: 32%; 
+    height: 65vh;  
     margin-bottom: 20px;
     background-color: #DD0103;
     color: rgb(255, 255, 255);
@@ -60,10 +58,10 @@
     }
   
     .categorycard {
-      width: 45%; /* Adjust the width for smaller screens */
-      height: auto; /* Adjust the height for smaller screens */
+      width: 45%;
+      height: auto; 
     }
   }
   
-  /* Add more media queries for other screen sizes if necessary */
+
   

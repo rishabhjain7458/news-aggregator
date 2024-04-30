@@ -6,25 +6,25 @@ import "./CategoryNews.css";
 const SportsNews = () => {
     const [sportsNews, setSportsNews] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [country, setCountry] = useState("us"); // Default country is USA
+    const [country, setCountry] = useState("us"); 
 
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
             try {
-                // Fetch Sports news based on selected country
+                
                 const sportsResponse = await axios.get(
                     "https://newsapi.org/v2/top-headlines",
                     {
                         params: {
                             category: "sports",
-                            country: country, // Use the selected country
+                            country: country, 
                             apiKey: "362214fe295a47e796e19883a30b596b",
                             pageSize: 100,
                         },
                     }
                 );
-                // Filter out news articles without images
+                
                 const filteredNews = sportsResponse.data.articles.filter(article => article.urlToImage);
                 setSportsNews(filteredNews);
             } catch (error) {
@@ -33,16 +33,16 @@ const SportsNews = () => {
             setLoading(false);
         };
 
-        fetchNews(); // Call the fetchNews function
-    }, [country]); // Re-run effect when country changes
+        fetchNews(); 
+    }, [country]); 
 
-    // Function to truncate text
+    
     const truncateText = (text, maxLength) => {
         if (text.length <= maxLength) return text;
         return text.substr(0, maxLength) + "...";
     };
 
-    // Function to handle country change
+    
     const handleCountryChange = (newCountry) => {
         setCountry(newCountry);
     };

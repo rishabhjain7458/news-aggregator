@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./NewsComponent.css";
+import {
+	getFirestore,
+	collection,
+	addDoc,
+	doc,
+	setDoc,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { app } from "../firebase";
+
+const firestore = getFirestore(app);
+const auth = getAuth(app);
 
 const NewsComponent = () => {
 	const [usNews, setUsNews] = useState([]);
 	const [indiaNews, setIndiaNews] = useState([]);
 	const [visibleNewsCount, setVisibleNewsCount] = useState(6);
 	const [loading, setLoading] = useState(false);
+	const [user, setUser] = useState(null);
 
 	useEffect(() => {
 		const fetchNews = async () => {
 			setLoading(true);
 			try {
-				
 				const usResponse = await axios.get(
 					"https://newsapi.org/v2/top-headlines",
 					{
 						params: {
 							country: "us",
-							apiKey: "362214fe295a47e796e19883a30b596b",
+							apiKey: "07d3602ca2ce4c758e084d360e48ed2c",
 							pageSize: 100,
 						},
 					}
@@ -28,13 +40,12 @@ const NewsComponent = () => {
 				);
 				setUsNews(usFilteredNews);
 
-				
 				const indiaResponse = await axios.get(
 					"https://newsapi.org/v2/top-headlines",
 					{
 						params: {
 							country: "in",
-							apiKey: "362214fe295a47e796e19883a30b596b",
+							apiKey: "07d3602ca2ce4c758e084d360e48ed2c",
 							pageSize: 100,
 						},
 					}
@@ -50,7 +61,52 @@ const NewsComponent = () => {
 		};
 
 		fetchNews();
+
+		const unsubscribe = auth.onAuthStateChanged((user) => {
+			if (user) {
+				setUser(user);
+				saveUserEmail(user);
+			} else {
+				setUser(null);
+			}
+		});
+
+		return () => unsubscribe();
 	}, []);
+
+	const saveUserEmail = async (user) => {
+		const userDocRef = doc(firestore, "users", user.uid);
+		await setDoc(
+			userDocRef,
+			{
+				email: user.email,
+			},
+			{ merge: true }
+		);
+	};
+
+	const writedata = async (article) => {
+		if (!user) {
+			alert("You must be logged in to bookmark articles.");
+			return;
+		}
+
+		try {
+			const userDocRef = doc(collection(firestore, "users"), user.uid);
+			const bookmarksCollectionRef = collection(userDocRef, "bookmarks");
+			const result = await addDoc(bookmarksCollectionRef, {
+				title: article.title,
+				description: article.description,
+				url: article.url,
+				urlToImage: article.urlToImage,
+				publishedAt: article.publishedAt,
+			});
+
+			console.log("Bookmark added with ID:", result.id);
+		} catch (error) {
+			console.error("Error adding bookmark:", error);
+		}
+	};
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -78,7 +134,12 @@ const NewsComponent = () => {
 							id="usNewsCarousel"
 							className="carousel carousel-dark slide mt-0"
 							data-bs-ride="carousel">
-							<h1 style={{ textAlign: "center", backgroundColor: "#DD0103", color: "white" }}>
+							<h1
+								style={{
+									textAlign: "center",
+									backgroundColor: "#DD0103",
+									color: "white",
+								}}>
 								USA-NOW
 							</h1>
 							<div className="carousel-inner">
@@ -94,7 +155,11 @@ const NewsComponent = () => {
 										/>
 										<br />
 										<div className="carousel-caption d-none d-md-block">
-											<h5 style={{ backgroundColor: "#F5CC75", marginBottom:"0%" }}>
+											<h5
+												style={{
+													backgroundColor: "#F5CC75",
+													marginBottom: "0%",
+												}}>
 												{article.title}
 											</h5>
 											<a
@@ -129,7 +194,12 @@ const NewsComponent = () => {
 							</button>
 						</div>
 						{/* India News Carousel */}
-						<h1 style={{ textAlign: "center", backgroundColor: "#DD0103", color: "white" }}>
+						<h1
+							style={{
+								textAlign: "center",
+								backgroundColor: "#DD0103",
+								color: "white",
+							}}>
 							INDIA-NOW
 						</h1>
 						<div
@@ -149,7 +219,11 @@ const NewsComponent = () => {
 										/>
 										<br />
 										<div className="carousel-caption d-none d-md-block">
-											<h5 style={{ backgroundColor: "#F5CC75", marginBottom:"0%" }}>
+											<h5
+												style={{
+													backgroundColor: "#F5CC75",
+													marginBottom: "0%",
+												}}>
 												{article.title}
 											</h5>
 											<a
@@ -188,7 +262,12 @@ const NewsComponent = () => {
 						<div
 							className="mt-1 pe-2"
 							style={{ maxHeight: "120vh", overflowY: "scroll" }}>
-							<h1 style={{ textAlign: "center", backgroundColor: "#DD0103" , color:"white"}}>
+							<h1
+								style={{
+									textAlign: "center",
+									backgroundColor: "#DD0103",
+									color: "white",
+								}}>
 								HEADLINES
 							</h1>
 							{usNews.slice(3, visibleNewsCount).map((article, index) => (
@@ -222,6 +301,11 @@ const NewsComponent = () => {
 														</a>
 													</small>
 												</p>
+												<button
+													className="btn btn-primary"
+													onClick={() => writedata(article)}>
+													Bookmark
+												</button>
 											</div>
 										</div>
 									</div>

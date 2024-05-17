@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./NewsComponent.css";
 import "./CategoryNews.css";
+import { getFirestore, collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { app } from "../firebase";
+
+const firestore = getFirestore(app);
+const auth = getAuth(app);
 
 const PoliticsNews = () => {
     const [politicsNews, setPoliticsNews] = useState([]);
+    const [filteredNews, setFilteredNews] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [country, setCountry] = useState("us"); 
+    const [country, setCountry] = useState("us");
+    const [user, setUser] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         const fetchNews = async () => {
@@ -17,33 +26,83 @@ const PoliticsNews = () => {
                     {
                         params: {
                             category: "politics",
-                            country: country, 
-                            apiKey: "362214fe295a47e796e19883a30b596b",
+                            country: country,
+                            apiKey: "07d3602ca2ce4c758e084d360e48ed2c",
                             pageSize: 100,
                         },
                     }
                 );
-                
+
                 const filteredNews = politicsResponse.data.articles.filter(article => article.urlToImage);
                 setPoliticsNews(filteredNews);
+                setFilteredNews(filteredNews); // Initially set filtered news same as fetched news
             } catch (error) {
                 console.error("Error fetching politics news:", error);
             }
             setLoading(false);
         };
 
-        fetchNews(); 
-    }, [country]); 
+        fetchNews();
 
-    
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setUser(user);
+                saveUserEmail(user);
+            } else {
+                setUser(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [country]);
+
+    const saveUserEmail = async (user) => {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        await setDoc(userDocRef, {
+            email: user.email,
+        }, { merge: true });
+    };
+
+    const writedata = async (article) => {
+        if (!user) {
+            alert("You must be logged in to bookmark articles.");
+            return;
+        }
+
+        try {
+            const userDocRef = doc(collection(firestore, 'users'), user.uid);
+            const bookmarksCollectionRef = collection(userDocRef, 'bookmarks');
+            const result = await addDoc(bookmarksCollectionRef, {
+                title: article.title,
+                description: article.description,
+                url: article.url,
+                urlToImage: article.urlToImage,
+                publishedAt: article.publishedAt,
+            });
+
+            alert("Bookmark added successfully!");
+            console.log("Bookmark added with ID:", result.id);
+        } catch (error) {
+            console.error("Error adding bookmark:", error);
+        }
+    };
+
     const truncateText = (text, maxLength) => {
-        if (text.length <= maxLength) return text;
+        if (!text || text.length <= maxLength) return text;
         return text.substr(0, maxLength) + "...";
     };
 
-    
     const handleCountryChange = (newCountry) => {
         setCountry(newCountry);
+    };
+
+    // Function to filter articles based on search query
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const filtered = politicsNews.filter(article =>
+            article.title.toLowerCase().includes(query.toLowerCase())
+        );
+        setFilteredNews(filtered);
     };
 
     return (
@@ -56,17 +115,33 @@ const PoliticsNews = () => {
                     India
                 </button>
             </div>
+            <div className="search-container" style={{paddingLeft:"83vh",paddingTop:"2vh"}}>
+        <input className="text-black"
+          style={{height:"6vh",borderRadius:"15px"}}
+          type="text"
+          placeholder = "Search articles..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+      </div>
             {loading ? (
                 <p>Loading...</p>
             ) : (
                 <div className="card-container categorycontainer">
-                    {politicsNews.map((article, index) => (
+                    {filteredNews.map((article, index) => (
                         <div className="card categorycard" key={index}>
                             <img src={article.urlToImage} className="card-img-top categoryimg" alt={article.title} />
                             <div className="card-body">
-                                <h5 className="card-title text-white">{truncateText(article.title,80)}</h5>
+                                <h5 className="card-title text-white">{truncateText(article.title, 80)}</h5>
                                 <p className="card-text text-white">{truncateText(article.description, 80)}</p>
                                 <a href={article.url} className="btn btn-primary text-white" target="_blank" rel="noopener noreferrer">Read more</a>
+                                <button
+                                    className="btn btn-primary text-white"
+                                    onClick={() => writedata(article)}
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    Bookmark
+                                </button>
                             </div>
                         </div>
                     ))}

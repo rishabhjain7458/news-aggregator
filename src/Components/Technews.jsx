@@ -142,7 +142,7 @@ const TechNews = () => {
 					type="text"
 					placeholder="Search articles..."
 					value={searchQuery}
-					onChange={(e) => handleSearch(e.target.value)}
+					onChange={handleSearch}
 				/>
 			</div>
 			{loading ? (
